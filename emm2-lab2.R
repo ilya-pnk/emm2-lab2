@@ -84,6 +84,35 @@ lines(h_test, col = "red", lwd = 2, lty = 2)
 legend("topright", legend = c("Тестовая выборка", "Прогноз волатильности"), col = c("black", "red"), lty = c(1, 2), lwd = c(1, 2))
 
 
+##GARCH(1,1)
+set.seed(123)
+n =1000 
+
+# Параметры GARCH(1,1)
+a0 = 0.1 # Базовая волатильность
+a1 = 0.4 # прошлый h_t^2
+b1 = 0.4 # прошлый sigma_t^2
+
+epsilon_1 = rnorm(n) 
+
+# Инициализация массивов
+h = numeric(n) # Квадрат волатильности
+sigma= numeric(n) # Наблюдения процесса
+
+# Моделирование GARCH(1,1)
+for (t in 2:n) {
+  h[t] <- a0 + a1 * sigma[t-1]^2 + b1 * h[t-1] # Волатильность
+  sigma[t] <- sqrt(h[t]) * epsilon_1[t] # Наблюдения
+}
+
+# Построение графиков GARCH(1,1)
+par(mfrow = c(2, 1))
+plot(sigma, type = "l", main = "График процесса GARCH(1,1)", ylab = "Значение", xlab = "Время")
+plot(sqrt(h), type = "l", main = "График волатильности GARCH(1,1)", ylab = "Волатильность", xlab = "Время")
+
+# Оценка параметров GARCH(1,1) с использованием функции garch()
+garch1_1 <- garch(sigma, order = c(1, 1))
+summary(garch1_1)
 
 
 
